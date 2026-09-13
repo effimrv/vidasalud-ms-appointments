@@ -1,0 +1,16 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: vidasalud-ms-appointments
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/vidasalud}
+    username: ${DB_USER:vidasalud}
+    password: ${DB_PASS:vidasalud123}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
