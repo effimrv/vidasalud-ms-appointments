@@ -65,5 +65,3 @@ docker run -d --name appointments -p 8081:8081 appointments
 ```bash
 curl -i http://localhost:8081/api/appointments
 ```
-# vidasalud-ms-appointments
-Gestión de atenciones, estados de citas y coordinación
