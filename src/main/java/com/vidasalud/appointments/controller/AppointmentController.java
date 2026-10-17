@@ -25,15 +25,23 @@ public class AppointmentController {
         this.eventos = Objects.requireNonNull(eventos, "eventos must not be null");
     }
 
+    /** Lista las atenciones. Con pacienteId (lo envía el BFF para los pacientes) devuelve solo las de ese paciente. */
     @GetMapping
-    public List<Appointment> list(@RequestParam(required = false) EstadoAtencion status) {
+    public List<Appointment> list(@RequestParam(required = false) EstadoAtencion status,
+                                  @RequestParam(required = false) String pacienteId) {
+        if (pacienteId != null) {
+            return (status == null) ? repo.findByPacienteId(pacienteId) : repo.findByPacienteIdAndEstado(pacienteId, status);
+        }
         return (status == null) ? repo.findAll() : repo.findByEstado(status);
     }
 
+    /** Con pacienteId, una atención de otro paciente se responde como inexistente (404). */
     @GetMapping("/{id}")
-    public Appointment getById(@PathVariable("id") @NonNull Long id) {
-        return repo.findById(id).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atencion no encontrada"));
+    public Appointment getById(@PathVariable("id") @NonNull Long id,
+                               @RequestParam(required = false) String pacienteId) {
+        return repo.findById(id)
+            .filter(a -> pacienteId == null || pacienteId.equals(a.getPacienteId()))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atencion no encontrada"));
     }
 
     @PostMapping
@@ -47,7 +55,7 @@ public class AppointmentController {
 
     @PutMapping("/{id}/status")
     public Appointment changeStatus(@PathVariable("id") @NonNull Long id, @RequestBody @NonNull Map<String, String> body) {
-        Appointment a = getById(id);
+        Appointment a = getById(id, null);
         EstadoAtencion nuevo = EstadoAtencion.valueOf(Objects.requireNonNull(body.get("status"), "status must not be null"));
         validarTransicion(a.getEstado(), nuevo);
         a.setEstado(nuevo);

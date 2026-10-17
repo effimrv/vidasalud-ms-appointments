@@ -1,5 +1,6 @@
 package com.vidasalud.appointments.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -13,6 +14,12 @@ public class Appointment {
     private Long id;
 
     private String pacienteNombre;
+    /**
+     * Identificador del paciente en Entra ID (claim oid del token), lo asigna el BFF.
+     * Solo se recibe, no se devuelve en las respuestas.
+     */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String pacienteId;
     private Long servicioId;
     private Long boxId;
 
@@ -28,6 +35,8 @@ public class Appointment {
     public void setId(Long id) { this.id = id; }
     public String getPacienteNombre() { return pacienteNombre; }
     public void setPacienteNombre(String v) { this.pacienteNombre = v; }
+    public String getPacienteId() { return pacienteId; }
+    public void setPacienteId(String v) { this.pacienteId = v; }
     public Long getServicioId() { return servicioId; }
     public void setServicioId(Long v) { this.servicioId = v; }
     public Long getBoxId() { return boxId; }
