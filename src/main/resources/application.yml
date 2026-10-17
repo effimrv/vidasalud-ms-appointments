@@ -58,9 +58,14 @@ vidasalud:
       porcentaje-bloqueado: 20
     # Pacientes simulados que reservan (y a veces cancelan) horas libres cada cierto tiempo.
     demanda:
-      habilitada: true
-      intervalo-ms: 45000
+      # Se apaga con la variable de entorno DEMANDA_SIMULADA=false.
+      habilitada: ${DEMANDA_SIMULADA:true}
+      intervalo-ms: 60000
       probabilidad-reserva: 0.6
       probabilidad-cancelacion: 0.1
-      maximo-reservas-futuras: 40
+      # Tope de reservas simuladas con fecha futura: la agenda tiene movimiento sin llenarse.
+      maximo-reservas-futuras: 12
       dias-horizonte: 10
+      # Las reservas simuladas finalizadas o canceladas se eliminan pasado este tiempo (las reales nunca).
+      limpieza-tras: 30m
+      limpieza-intervalo-ms: 300000

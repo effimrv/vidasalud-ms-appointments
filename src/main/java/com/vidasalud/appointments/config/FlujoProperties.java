@@ -27,8 +27,9 @@ public record FlujoProperties(boolean automatico, Map<EstadoAtencion, Duration> 
         }
     }
 
+    /** @param limpiezaTras tiempo tras el cual se eliminan las reservas simuladas finalizadas o canceladas */
     public record Demanda(boolean habilitada, double probabilidadReserva, double probabilidadCancelacion,
-                          int maximoReservasFuturas, int diasHorizonte) {}
+                          int maximoReservasFuturas, int diasHorizonte, Duration limpiezaTras) {}
 
     /** Cuánto permanece una cita en el estado indicado antes de avanzar (por defecto 30 segundos). */
     public Duration tiempoEn(EstadoAtencion estado) {

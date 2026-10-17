@@ -13,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,6 +93,17 @@ class AtencionServiceTest {
 
         assertThatThrownBy(() -> servicio.aplicar(cita, EstadoAtencion.CERRADA, "Recepción", "x"))
                 .hasMessageContaining("400");
+    }
+
+    @Test
+    void laLimpiezaSoloEliminaReservasSimuladasTerminadas() {
+        Appointment simulada = nueva();
+        simulada.setId(8L);
+        when(repo.findBySimuladaTrueAndEstadoInAndActualizadaEnBefore(any(), any())).thenReturn(List.of(simulada));
+
+        assertThat(servicio.eliminarSimuladasTerminadas(Fixtures.RELOJ.instant())).isEqualTo(1);
+        verify(historial).deleteByAtencionIdIn(List.of(8L));
+        verify(repo).deleteAll(List.of(simulada));
     }
 
     private Appointment nueva() {

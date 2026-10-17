@@ -11,6 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +46,26 @@ class AppointmentRepositoryTest {
         assertThat(repo.findBySimuladaTrueAndEstadoIn(Set.of(EstadoAtencion.CONFIRMADA))).hasSize(1);
         assertThat(repo.findByEstadoIn(EstadoAtencion.EN_CURSO)).hasSize(2);
         assertThat(repo.findServiciosReservados()).containsExactlyInAnyOrder(1L, 2L);
+    }
+
+    @Test
+    void encuentraLasSimuladasTerminadasParaLimpiarlas() {
+        Instant hace = Instant.parse("2026-10-19T14:00:00Z");
+        Appointment vieja = cita(1L, MARTES_9, EstadoAtencion.CERRADA, true);
+        vieja.setActualizadaEn(hace);
+        Appointment real = cita(1L, MARTES_9.plusMinutes(30), EstadoAtencion.CERRADA, false);
+        real.setActualizadaEn(hace);
+        Appointment reciente = cita(2L, MARTES_9, EstadoAtencion.CANCELADA, true);
+        reciente.setActualizadaEn(hace.plusSeconds(3600));
+        repo.saveAll(List.of(vieja, real, reciente));
+        historial.save(new CambioEstado(vieja.getId(), EstadoAtencion.CERRADA, hace, "Sistema", "x"));
+
+        List<Appointment> terminadas = repo.findBySimuladaTrueAndEstadoInAndActualizadaEnBefore(
+                Set.of(EstadoAtencion.CERRADA, EstadoAtencion.CANCELADA), hace.plusSeconds(60));
+        assertThat(terminadas).containsExactly(vieja);
+
+        historial.deleteByAtencionIdIn(List.of(vieja.getId()));
+        assertThat(historial.findByAtencionIdOrderByFechaAscIdAsc(vieja.getId())).isEmpty();
     }
 
     @Test

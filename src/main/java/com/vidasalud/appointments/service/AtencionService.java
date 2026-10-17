@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Reglas de negocio de las atenciones: creación con validación de agenda, cambios de estado con transiciones
@@ -97,6 +98,22 @@ public class AtencionService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Un paciente solo puede cancelar sus citas");
         }
         return aplicar(atencion, nuevo, responsable, detalle);
+    }
+
+    /**
+     * Elimina las reservas simuladas que terminaron (finalizadas o canceladas) antes del límite, con su historial.
+     * Las citas de pacientes reales nunca se eliminan.
+     */
+    @Transactional
+    public int eliminarSimuladasTerminadas(Instant limite) {
+        List<Appointment> terminadas = repo.findBySimuladaTrueAndEstadoInAndActualizadaEnBefore(
+                Set.of(EstadoAtencion.CERRADA, EstadoAtencion.CANCELADA), limite);
+        if (terminadas.isEmpty()) {
+            return 0;
+        }
+        historial.deleteByAtencionIdIn(terminadas.stream().map(Appointment::getId).toList());
+        repo.deleteAll(terminadas);
+        return terminadas.size();
     }
 
     /** Aplica una transición validada, la deja en el historial y publica el evento. */

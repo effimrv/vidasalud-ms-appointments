@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.text.Normalizer;
 import java.time.Clock;
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -73,6 +74,18 @@ public class DemandaSimulada {
             }
         } catch (RuntimeException e) {
             log.warn("La demanda simulada no pudo completar su ciclo: {}", e.getMessage());
+        }
+    }
+
+    /** Mantiene la tabla acotada: borra las reservas simuladas que ya terminaron hace un rato. */
+    @Scheduled(fixedDelayString = "${vidasalud.flujo.demanda.limpieza-intervalo-ms:300000}", initialDelay = 60_000)
+    public void limpiar() {
+        if (!props.demanda().habilitada()) {
+            return;
+        }
+        int eliminadas = atenciones.eliminarSimuladasTerminadas(Instant.now(reloj).minus(props.demanda().limpiezaTras()));
+        if (eliminadas > 0) {
+            log.info("Demanda simulada: se eliminaron {} reservas simuladas ya terminadas", eliminadas);
         }
     }
 

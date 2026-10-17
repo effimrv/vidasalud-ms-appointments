@@ -24,6 +24,6 @@ public final class Fixtures {
                 Map.of(EstadoAtencion.SOLICITADA, Duration.ofSeconds(15), EstadoAtencion.CONFIRMADA, Duration.ofSeconds(25),
                         EstadoAtencion.EN_ESPERA, Duration.ofSeconds(25), EstadoAtencion.EN_ATENCION, Duration.ofSeconds(40)),
                 new FlujoProperties.Agenda("America/Santiago", List.of("09:00", "09:30", "15:00", "15:30"), porcentajeBloqueado),
-                new FlujoProperties.Demanda(true, 0.6, 0.1, 40, 10));
+                new FlujoProperties.Demanda(true, 0.6, 0.1, 12, 10, Duration.ofMinutes(30)));
     }
 }

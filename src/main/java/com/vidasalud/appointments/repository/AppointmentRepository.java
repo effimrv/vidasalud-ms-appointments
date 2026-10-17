@@ -5,6 +5,7 @@ import com.vidasalud.appointments.model.EstadoAtencion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     long countBySimuladaTrueAndFechaHoraAfterAndEstadoNot(LocalDateTime desde, EstadoAtencion excluido);
 
     List<Appointment> findBySimuladaTrueAndEstadoIn(Collection<EstadoAtencion> estados);
+
+    List<Appointment> findBySimuladaTrueAndEstadoInAndActualizadaEnBefore(Collection<EstadoAtencion> estados, Instant limite);
 
     @Query("select distinct a.servicioId from Appointment a where a.servicioId is not null")
     List<Long> findServiciosReservados();

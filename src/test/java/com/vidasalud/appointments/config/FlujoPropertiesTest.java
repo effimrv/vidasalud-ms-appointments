@@ -3,6 +3,7 @@ package com.vidasalud.appointments.config;
 import com.vidasalud.appointments.model.EstadoAtencion;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.bind.PropertySourcesPlaceholdersResolver;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.StandardEnvironment;
@@ -22,7 +23,7 @@ class FlujoPropertiesTest {
         new YamlPropertySourceLoader().load("application", new ClassPathResource("application.yml"))
                 .forEach(entorno.getPropertySources()::addLast);
 
-        FlujoProperties props = new Binder(ConfigurationPropertySources.get(entorno))
+        FlujoProperties props = new Binder(ConfigurationPropertySources.get(entorno), new PropertySourcesPlaceholdersResolver(entorno))
                 .bind("vidasalud.flujo", FlujoProperties.class).get();
 
         assertThat(props.automatico()).isTrue();
@@ -32,5 +33,7 @@ class FlujoPropertiesTest {
         assertThat(props.agenda().horas()).contains(LocalTime.of(9, 0), LocalTime.of(16, 30));
         assertThat(props.agenda().zona().getId()).isEqualTo("America/Santiago");
         assertThat(props.demanda().habilitada()).isTrue();
+        assertThat(props.demanda().maximoReservasFuturas()).isEqualTo(12);
+        assertThat(props.demanda().limpiezaTras()).isEqualTo(Duration.ofMinutes(30));
     }
 }
