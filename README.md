@@ -9,6 +9,7 @@ Microservicio de VidaSalud encargado de gestionar las atenciones o citas de los 
 - Crear nuevas atenciones.
 - Cambiar el estado de una atención mediante transiciones controladas.
 - Persistir la información en PostgreSQL/Supabase.
+- Publicar en RabbitMQ un evento por cada cita creada o cambio de estado.
 
 ## Tecnologías
 
@@ -17,6 +18,7 @@ Microservicio de VidaSalud encargado de gestionar las atenciones o citas de los 
 - Spring Web.
 - Spring Data JPA e Hibernate.
 - PostgreSQL JDBC Driver.
+- Spring AMQP (RabbitMQ).
 - Maven.
 
 ## Puerto y endpoints
@@ -29,6 +31,23 @@ El servicio utiliza el puerto `8081`.
 | GET | `/api/appointments/{id}` | Obtiene una atención por ID. |
 | POST | `/api/appointments` | Crea una atención. |
 | PUT | `/api/appointments/{id}/status` | Cambia el estado de una atención. |
+
+## Mensajería (RabbitMQ)
+
+Cada vez que se **crea una cita** o **cambia su estado**, el servicio publica un evento JSON en el exchange topic `vidasalud.citas.topic`. Los consume `vidasalud-ms-notify`.
+
+| Evento | Routing key |
+|---|---|
+| Cita creada | `cita.creada` |
+| Confirmada / En espera / En atención | `cita.confirmada`, `cita.en_espera`, `cita.en_atencion` |
+| Cerrada / Cancelada | `cita.cerrada`, `cita.cancelada` |
+
+- Los nombres se configuran en `application.yml` (`vidasalud.mensajeria`) y la configuración está en `messaging/RabbitConfig`.
+- El controlador depende de la interfaz `CitaEventPublisher`, no de RabbitMQ.
+- Se activan las confirmaciones del broker (publisher confirms) y se registran en el log los mensajes que no llegan a ninguna cola.
+- Si RabbitMQ no está disponible, la cita **se guarda igual** y solo se registra el error: la mensajería no altera la lógica existente.
+
+Variables: `RABBITMQ_ADDRESSES` (por defecto `localhost:5672,localhost:5673`), `RABBITMQ_USER` y `RABBITMQ_PASS`.
 
 ## Ejecución local
 

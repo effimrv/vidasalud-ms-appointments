@@ -1,5 +1,6 @@
 package com.vidasalud.appointments.controller;
 
+import com.vidasalud.appointments.messaging.CitaEventPublisher;
 import com.vidasalud.appointments.model.Appointment;
 import com.vidasalud.appointments.model.EstadoAtencion;
 import com.vidasalud.appointments.repository.AppointmentRepository;
@@ -17,9 +18,11 @@ import java.util.Objects;
 public class AppointmentController {
 
     private final AppointmentRepository repo;
+    private final CitaEventPublisher eventos;
 
-    public AppointmentController(@NonNull AppointmentRepository repo) {
+    public AppointmentController(@NonNull AppointmentRepository repo, @NonNull CitaEventPublisher eventos) {
         this.repo = Objects.requireNonNull(repo, "repo must not be null");
+        this.eventos = Objects.requireNonNull(eventos, "eventos must not be null");
     }
 
     @GetMapping
@@ -37,7 +40,9 @@ public class AppointmentController {
     public Appointment create(@RequestBody @NonNull Appointment a) {
         a.setId(null);
         a.setEstado(EstadoAtencion.SOLICITADA);
-        return repo.save(a);
+        Appointment guardada = repo.save(a);
+        eventos.publicarCambio(guardada);
+        return guardada;
     }
 
     @PutMapping("/{id}/status")
@@ -46,7 +51,9 @@ public class AppointmentController {
         EstadoAtencion nuevo = EstadoAtencion.valueOf(Objects.requireNonNull(body.get("status"), "status must not be null"));
         validarTransicion(a.getEstado(), nuevo);
         a.setEstado(nuevo);
-        return repo.save(a);
+        Appointment guardada = repo.save(a);
+        eventos.publicarCambio(guardada);
+        return guardada;
     }
 
     private void validarTransicion(EstadoAtencion actual, EstadoAtencion nuevo) {
