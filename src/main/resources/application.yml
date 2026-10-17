@@ -25,10 +25,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
-# Nombres de mensajería centralizados: el publicador no escribe nombres de RabbitMQ a mano.
+# Nombres de mensajería centralizados (misma estructura que ms-notify): el publicador no escribe nombres a mano.
 vidasalud:
   mensajeria:
-    # Exchange topic al que se publican los eventos de citas (lo consumen las colas de ms-notify).
-    exchange-citas: vidasalud.citas.topic
-    # Routing key = <prefijo>.<evento>, por ejemplo cita.creada o cita.confirmada.
-    prefijo-routing-key: cita
+    exchanges:
+      # Exchange topic al que se publican los eventos de citas (lo consumen las colas de ms-notify).
+      citas: vidasalud.citas.topic
+    # Routing key de cada evento del ciclo de vida de una cita.
+    routing-keys:
+      creada: cita.creada
+      confirmada: cita.confirmada
+      en-espera: cita.en_espera
+      en-atencion: cita.en_atencion
+      cerrada: cita.cerrada
+      cancelada: cita.cancelada

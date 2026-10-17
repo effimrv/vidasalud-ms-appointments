@@ -8,6 +8,9 @@ import org.springframework.amqp.AmqpConnectException;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,7 +26,11 @@ class RabbitCitaEventPublisherTest {
     @BeforeEach
     void preparar() {
         rabbitTemplate = mock(RabbitTemplate.class);
-        publisher = new RabbitCitaEventPublisher(rabbitTemplate, new MensajeriaProperties("vidasalud.citas.topic", "cita"));
+        publisher = new RabbitCitaEventPublisher(rabbitTemplate, new MensajeriaProperties(
+                new MensajeriaProperties.Exchanges("vidasalud.citas.topic"),
+                Map.of(TipoEventoCita.CREADA, "cita.creada", TipoEventoCita.CONFIRMADA, "cita.confirmada",
+                        TipoEventoCita.EN_ESPERA, "cita.en_espera", TipoEventoCita.EN_ATENCION, "cita.en_atencion",
+                        TipoEventoCita.CERRADA, "cita.cerrada", TipoEventoCita.CANCELADA, "cita.cancelada")));
     }
 
     @Test
@@ -55,5 +62,14 @@ class RabbitCitaEventPublisherTest {
         a.setServicioId(2L);
         a.setEstado(estado);
         return a;
+    }
+
+    @Test
+    void noArrancaSiFaltaLaRoutingKeyDeUnEvento() {
+        assertThatThrownBy(() -> new MensajeriaProperties(
+                new MensajeriaProperties.Exchanges("vidasalud.citas.topic"),
+                Map.of(TipoEventoCita.CREADA, "cita.creada")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("CONFIRMADA");
     }
 }

@@ -42,7 +42,7 @@ Cada vez que se **crea una cita** o **cambia su estado**, el servicio publica un
 | Confirmada / En espera / En atención | `cita.confirmada`, `cita.en_espera`, `cita.en_atencion` |
 | Cerrada / Cancelada | `cita.cerrada`, `cita.cancelada` |
 
-- Los nombres se configuran en `application.yml` (`vidasalud.mensajeria`) y la configuración está en `messaging/RabbitConfig`.
+- El exchange y la routing key de cada evento están escritos en `application.yml` (`vidasalud.mensajeria.exchanges` y `routing-keys`, con la misma estructura que ms-notify). La configuración está en `messaging/RabbitConfig`. Si falta alguna routing key, el servicio no arranca.
 - El controlador depende de la interfaz `CitaEventPublisher`, no de RabbitMQ.
 - Se activan las confirmaciones del broker (publisher confirms) y se registran en el log los mensajes que no llegan a ninguna cola.
 - Si RabbitMQ no está disponible, la cita **se guarda igual** y solo se registra el error: la mensajería no altera la lógica existente.
