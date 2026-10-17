@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.amqp.RabbitTemplateCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 
 /**
  * Configuración de mensajería del productor. Las colas y sus DLQ las declara ms-notify (el consumidor);
@@ -30,7 +31,7 @@ public class RabbitConfig {
 
     /** Serializa los eventos como JSON con fechas ISO-8601 (usa el ObjectMapper de Spring Boot). */
     @Bean
-    public MessageConverter messageConverter(ObjectMapper objectMapper) {
+    public MessageConverter messageConverter(@NonNull ObjectMapper objectMapper) {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
 

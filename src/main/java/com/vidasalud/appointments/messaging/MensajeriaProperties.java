@@ -1,6 +1,7 @@
 package com.vidasalud.appointments.messaging;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.lang.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "vidasalud.mensajeria")
 public record MensajeriaProperties(Exchanges exchanges, Map<TipoEventoCita, String> routingKeys) {
 
-    public record Exchanges(String citas) {}
+    public record Exchanges(@NonNull String citas) {}
 
     public MensajeriaProperties {
         if (exchanges == null || exchanges.citas() == null || exchanges.citas().isBlank()) {
@@ -29,7 +30,11 @@ public record MensajeriaProperties(Exchanges exchanges, Map<TipoEventoCita, Stri
         routingKeys = Map.copyOf(routingKeys);
     }
 
-    public String routingKey(TipoEventoCita tipo) {
-        return routingKeys.get(tipo);
+    public @NonNull String routingKey(TipoEventoCita tipo) {
+        String routingKey = routingKeys.get(tipo);
+        if (routingKey == null) {
+            throw new IllegalStateException("No hay routing key configurada para " + tipo);
+        }
+        return routingKey;
     }
 }
