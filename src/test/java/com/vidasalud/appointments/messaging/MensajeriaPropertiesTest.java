@@ -25,7 +25,7 @@ class MensajeriaPropertiesTest {
         MensajeriaProperties props = new Binder(ConfigurationPropertySources.get(entorno))
                 .bind("vidasalud.mensajeria", MensajeriaProperties.class).get();
 
-        assertThat(props.exchanges().citas()).isEqualTo("vidasalud.citas.topic");
+        assertThat(props.exchangeCitas()).isEqualTo("vidasalud.citas.topic");
         assertThat(props.routingKey(TipoEventoCita.CREADA)).isEqualTo("cita.creada");
         assertThat(props.routingKey(TipoEventoCita.EN_ESPERA)).isEqualTo("cita.en_espera");
         assertThat(props.routingKey(TipoEventoCita.EN_ATENCION)).isEqualTo("cita.en_atencion");

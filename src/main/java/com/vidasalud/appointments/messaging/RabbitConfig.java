@@ -26,7 +26,7 @@ public class RabbitConfig {
     /** Exchange topic de eventos de citas (caso de uso: notificar, emitir tickets y generar comprobantes). */
     @Bean
     public TopicExchange exchangeCitas(MensajeriaProperties props) {
-        return ExchangeBuilder.topicExchange(props.exchanges().citas()).durable(true).build();
+        return ExchangeBuilder.topicExchange(props.exchangeCitas()).durable(true).build();
     }
 
     /** Serializa los eventos como JSON con fechas ISO-8601 (usa el ObjectMapper de Spring Boot). */

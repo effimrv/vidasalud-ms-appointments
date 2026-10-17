@@ -14,7 +14,7 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "vidasalud.mensajeria")
 public record MensajeriaProperties(Exchanges exchanges, Map<TipoEventoCita, String> routingKeys) {
 
-    public record Exchanges(@NonNull String citas) {}
+    public record Exchanges(String citas) {}
 
     public MensajeriaProperties {
         if (exchanges == null || exchanges.citas() == null || exchanges.citas().isBlank()) {
@@ -28,6 +28,15 @@ public record MensajeriaProperties(Exchanges exchanges, Map<TipoEventoCita, Stri
             throw new IllegalStateException("Faltan routing keys en vidasalud.mensajeria.routing-keys para: " + faltantes);
         }
         routingKeys = Map.copyOf(routingKeys);
+    }
+
+    /** Exchange topic de citas (validado al arrancar). */
+    public @NonNull String exchangeCitas() {
+        String citas = exchanges.citas();
+        if (citas == null) {
+            throw new IllegalStateException("Falta vidasalud.mensajeria.exchanges.citas en application.yml");
+        }
+        return citas;
     }
 
     public @NonNull String routingKey(TipoEventoCita tipo) {

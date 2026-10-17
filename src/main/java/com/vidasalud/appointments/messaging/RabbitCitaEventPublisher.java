@@ -30,9 +30,9 @@ public class RabbitCitaEventPublisher implements CitaEventPublisher {
         CitaEvento evento = CitaEvento.desde(cita);
         String routingKey = props.routingKey(evento.tipo());
         try {
-            rabbitTemplate.convertAndSend(props.exchanges().citas(), routingKey, evento,
+            rabbitTemplate.convertAndSend(props.exchangeCitas(), routingKey, evento,
                     new CorrelationData("cita-" + cita.getId() + "-" + evento.tipo()));
-            log.info("Evento publicado: {} → {} (cita {})", props.exchanges().citas(), routingKey, cita.getId());
+            log.info("Evento publicado: {} → {} (cita {})", props.exchangeCitas(), routingKey, cita.getId());
         } catch (AmqpException e) {
             log.error("No se pudo publicar {} de la cita {}; la cita se guardó igual. Causa: {}",
                     routingKey, cita.getId(), e.getMessage());
