@@ -78,7 +78,7 @@ java -jar target/appointments-1.0.0.jar
 
 La conexión se configura en `src/main/resources/application.yml`. El proyecto está preparado para utilizar el pooler de Supabase mediante PostgreSQL y `prepareThreshold=0`.
 
-No se deben almacenar contraseñas reales en el repositorio. En un entorno productivo se recomienda utilizar variables de entorno o un gestor de secretos.
+**Contraseña de la base de datos:** no está en el repositorio. Se entrega con la variable de entorno `DB_PASSWORD` (en la EC2, desde el `.env` de `vidasalud-infra`). Para correrlo en local: `DB_PASSWORD='…' mvn spring-boot:run`. También se pueden cambiar `DB_URL` y `DB_USERNAME`.
 
 ## Docker
 
@@ -86,7 +86,7 @@ El servicio puede ejecutarse como contenedor en el puerto `8081`:
 
 ```bash
 docker build -t appointments .
-docker run -d --name appointments -p 8081:8081 appointments
+docker run -d --name appointments -p 8081:8081 -e DB_PASSWORD='…' appointments
 ```
 
 ## Verificación rápida

@@ -13,9 +13,10 @@ spring:
     publisher-confirm-type: correlated
     publisher-returns: true
   datasource:
-    url: jdbc:postgresql://aws-0-sa-east-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0
-    username: postgres.zcmgjhgjvtlceacwjuvv
-    password: VidaSalud1234
+    # La contraseña nunca va en el repositorio: se entrega con la variable de entorno DB_PASSWORD.
+    url: ${DB_URL:jdbc:postgresql://aws-0-sa-east-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0}
+    username: ${DB_USERNAME:postgres.zcmgjhgjvtlceacwjuvv}
+    password: ${DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
