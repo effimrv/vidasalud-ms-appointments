@@ -75,7 +75,7 @@ class AppointmentRepositoryTest {
         historial.save(new CambioEstado(7L, EstadoAtencion.SOLICITADA, t, "Paciente", "a"));
 
         assertThat(historial.findByAtencionIdOrderByFechaAscIdAsc(7L))
-                .extracting(CambioEstado::getEstado)
+                .extracting(cambio -> cambio.getEstado())
                 .containsExactly(EstadoAtencion.SOLICITADA, EstadoAtencion.CONFIRMADA);
     }
 

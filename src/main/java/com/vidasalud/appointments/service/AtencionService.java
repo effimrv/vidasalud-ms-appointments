@@ -111,7 +111,7 @@ public class AtencionService {
         if (terminadas.isEmpty()) {
             return 0;
         }
-        historial.deleteByAtencionIdIn(terminadas.stream().map(Appointment::getId).toList());
+        historial.deleteByAtencionIdIn(terminadas.stream().map(atencion -> atencion.getId()).toList());
         repo.deleteAll(terminadas);
         return terminadas.size();
     }

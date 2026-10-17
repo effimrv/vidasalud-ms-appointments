@@ -32,7 +32,7 @@ class AgendaServiceTest {
 
         List<BloqueHorario> bloques = agenda.disponibilidad(1L, martes);
 
-        assertThat(bloques).extracting(BloqueHorario::hora).containsExactly("09:00", "09:30", "15:00", "15:30");
+        assertThat(bloques).extracting(bloque -> bloque.hora()).containsExactly("09:00", "09:30", "15:00", "15:30");
         assertThat(bloques.get(1).disponible()).isFalse();
         assertThat(bloques.get(1).motivo()).isEqualTo(AgendaService.MOTIVO_RESERVADA);
         assertThat(bloques.get(0).disponible()).isTrue();

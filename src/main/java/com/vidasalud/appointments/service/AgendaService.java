@@ -2,7 +2,6 @@ package com.vidasalud.appointments.service;
 
 import com.vidasalud.appointments.config.FlujoProperties;
 import com.vidasalud.appointments.dto.BloqueHorario;
-import com.vidasalud.appointments.model.Appointment;
 import com.vidasalud.appointments.model.EstadoAtencion;
 import com.vidasalud.appointments.repository.AppointmentRepository;
 import org.springframework.stereotype.Service;
@@ -51,8 +50,7 @@ public class AgendaService {
     public List<BloqueHorario> disponibilidad(Long servicioId, LocalDate fecha) {
         Set<LocalTime> reservadas = repo.findByServicioIdAndFechaHoraBetweenAndEstadoNot(servicioId,
                         fecha.atStartOfDay(), fecha.atTime(LocalTime.MAX), EstadoAtencion.CANCELADA).stream()
-                .map(Appointment::getFechaHora)
-                .map(LocalDateTime::toLocalTime)
+                .map(reserva -> reserva.getFechaHora().toLocalTime())
                 .collect(Collectors.toSet());
         return bloques().stream()
                 .map(hora -> {
