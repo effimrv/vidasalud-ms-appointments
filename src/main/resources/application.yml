@@ -23,7 +23,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+    show-sql: false
 
 # Nombres de mensajería centralizados (misma estructura que ms-notify): el publicador no escribe nombres a mano.
 vidasalud:
@@ -39,3 +39,28 @@ vidasalud:
       en-atencion: cita.en_atencion
       cerrada: cita.cerrada
       cancelada: cita.cancelada
+
+  # Simulación de la operación del centro (acelerada para la demostración).
+  flujo:
+    # Avanza solo cada cita: revisión, confirmación, llegada, atención y cierre.
+    automatico: true
+    intervalo-ms: 5000
+    # Tiempo que una cita permanece en cada estado antes de pasar al siguiente.
+    tiempos:
+      solicitada: 15s     # revisión automática de la solicitud
+      confirmada: 25s     # llegada del paciente (check-in)
+      en-espera: 25s      # llamado al box
+      en-atencion: 40s    # duración de la consulta
+    agenda:
+      zona-horaria: America/Santiago
+      bloques: ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "15:00", "15:30", "16:00", "16:30"]
+      # Porcentaje de horas que la agenda de cada profesional tiene bloqueadas (varía por día y especialidad).
+      porcentaje-bloqueado: 20
+    # Pacientes simulados que reservan (y a veces cancelan) horas libres cada cierto tiempo.
+    demanda:
+      habilitada: true
+      intervalo-ms: 45000
+      probabilidad-reserva: 0.6
+      probabilidad-cancelacion: 0.1
+      maximo-reservas-futuras: 40
+      dias-horizonte: 10

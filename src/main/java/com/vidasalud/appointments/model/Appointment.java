@@ -31,6 +31,18 @@ public class Appointment {
     /** Fecha y hora para la que el paciente agendó la atención (distinto de creadaEn, que es cuándo se solicitó). */
     private LocalDateTime fechaHora;
 
+    /** Correo del paciente (lo asigna el BFF desde el token), visible para el personal del centro. */
+    private String pacienteCorreo;
+
+    /** Último cambio de estado: el flujo automático mide desde aquí cuánto lleva la cita en su estado actual. */
+    private Instant actualizadaEn;
+
+    /** Explicación del último cambio de estado, visible para el paciente y la recepción. */
+    private String observacion;
+
+    /** true si la reserva la generó la demanda simulada (paciente ficticio de demostración). */
+    private Boolean simulada;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getPacienteNombre() { return pacienteNombre; }
@@ -47,4 +59,12 @@ public class Appointment {
     public void setCreadaEn(Instant v) { this.creadaEn = v; }
     public LocalDateTime getFechaHora() { return fechaHora; }
     public void setFechaHora(LocalDateTime v) { this.fechaHora = v; }
+    public String getPacienteCorreo() { return pacienteCorreo; }
+    public void setPacienteCorreo(String v) { this.pacienteCorreo = v; }
+    public Instant getActualizadaEn() { return actualizadaEn; }
+    public void setActualizadaEn(Instant v) { this.actualizadaEn = v; }
+    public String getObservacion() { return observacion; }
+    public void setObservacion(String v) { this.observacion = v; }
+    public boolean isSimulada() { return Boolean.TRUE.equals(simulada); }
+    public void setSimulada(boolean v) { this.simulada = v; }
 }

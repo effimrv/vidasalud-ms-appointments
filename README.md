@@ -28,9 +28,19 @@ El servicio utiliza el puerto `8081`.
 | Método | Endpoint | Descripción |
 |---|---|---|
 | GET | `/api/appointments` | Lista las atenciones y permite filtros por query params. |
-| GET | `/api/appointments/{id}` | Obtiene una atención por ID. |
+| GET | `/api/appointments/{id}` | Obtiene una atención con su historial de cambios de estado. |
+| GET | `/api/appointments/disponibilidad?servicioId=&fecha=` | Horas del día de una prestación, indicando cuáles están ocupadas y por qué. |
 | POST | `/api/appointments` | Crea una atención. |
-| PUT | `/api/appointments/{id}/status` | Cambia el estado de una atención. |
+| PUT | `/api/appointments/{id}/status` | Cancela (o cambia manualmente) el estado de una atención, registrando quién lo hizo. |
+
+## Flujo automático y agenda (simulación)
+
+Para mostrar cómo funcionaría el centro en la vida real, el servicio simula su operación de forma acelerada. Todo se configura en `application.yml` (`vidasalud.flujo`).
+
+- **Flujo automático** (`flujo/FlujoAutomatico`): cada 5 segundos avanza las citas en curso cuando cumplen su tiempo en cada estado: *Solicitada → (revisión automática, 15 s) → Confirmada → (llegada, 25 s) → En espera → (llamado al box, 25 s) → En atención → (40 s) → Cerrada*. Cada paso publica su evento en RabbitMQ, así notify emite el ticket y el comprobante sin intervención manual.
+- **Historial** (`historial_atenciones`): cada cambio queda registrado con fecha, responsable (paciente, sistema o recepción) y detalle.
+- **Agenda** (`service/AgendaService`): una hora no está disponible si ya está reservada, si ya pasó, si es domingo o si la agenda del profesional la tiene bloqueada (20 % de las horas, estable por día y especialidad). Reservar una hora ocupada responde **409**.
+- **Demanda simulada** (`flujo/DemandaSimulada`): cada 45 segundos un paciente ficticio puede reservar una hora libre (y a veces cancelar otra), así la agenda se va ocupando sola. Estas reservas quedan marcadas como `simulada`.
 
 ## Mensajería (RabbitMQ)
 
