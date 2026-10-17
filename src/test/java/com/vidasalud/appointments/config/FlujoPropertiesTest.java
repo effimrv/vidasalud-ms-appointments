@@ -34,6 +34,6 @@ class FlujoPropertiesTest {
         assertThat(props.agenda().zona().getId()).isEqualTo("America/Santiago");
         assertThat(props.demanda().habilitada()).isTrue();
         assertThat(props.demanda().maximoReservasFuturas()).isEqualTo(12);
-        assertThat(props.demanda().limpiezaTras()).isEqualTo(Duration.ofMinutes(30));
+        assertThat(props.demanda().limpiezaTras()).isEqualTo(Duration.ofMinutes(15));
     }
 }

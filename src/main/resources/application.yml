@@ -67,5 +67,5 @@ vidasalud:
       maximo-reservas-futuras: 12
       dias-horizonte: 10
       # Las reservas simuladas finalizadas o canceladas se eliminan pasado este tiempo (las reales nunca).
-      limpieza-tras: 30m
+      limpieza-tras: 15m
       limpieza-intervalo-ms: 300000

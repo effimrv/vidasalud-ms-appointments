@@ -40,7 +40,7 @@ Para mostrar cómo funcionaría el centro en la vida real, el servicio simula su
 - **Flujo automático** (`flujo/FlujoAutomatico`): cada 5 segundos avanza las citas en curso cuando cumplen su tiempo en cada estado: *Solicitada → (revisión automática, 15 s) → Confirmada → (llegada, 25 s) → En espera → (llamado al box, 25 s) → En atención → (40 s) → Cerrada*. Cada paso publica su evento en RabbitMQ, así notify emite el ticket y el comprobante sin intervención manual.
 - **Historial** (`historial_atenciones`): cada cambio queda registrado con fecha, responsable (paciente, sistema o recepción) y detalle.
 - **Agenda** (`service/AgendaService`): una hora no está disponible si ya está reservada, si ya pasó, si es domingo o si la agenda del profesional la tiene bloqueada (20 % de las horas, estable por día y especialidad). Reservar una hora ocupada responde **409**.
-- **Demanda simulada** (`flujo/DemandaSimulada`): cada 60 segundos un paciente ficticio puede reservar una hora libre (y a veces cancelar otra), así la agenda se va ocupando sola. Hay un tope de 12 reservas simuladas a futuro, y las simuladas que llevan 30 minutos finalizadas o canceladas se eliminan solas (las citas reales nunca). Se apaga con la variable `DEMANDA_SIMULADA=false`.
+- **Demanda simulada** (`flujo/DemandaSimulada`): cada 60 segundos un paciente ficticio puede reservar una hora libre (y a veces cancelar otra), así la agenda se va ocupando sola. Hay un tope de 12 reservas simuladas a futuro, y las simuladas que llevan 15 minutos finalizadas o canceladas se eliminan solas (las citas reales nunca). Se apaga con la variable `DEMANDA_SIMULADA=false`.
 
 ## Mensajería (RabbitMQ)
 
