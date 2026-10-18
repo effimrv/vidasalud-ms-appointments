@@ -2,12 +2,15 @@
 
 Microservicio de VidaSalud encargado de gestionar las atenciones o citas de los pacientes. Está construido con Spring Boot, Spring Data JPA y PostgreSQL.
 
+Matriz de funcionalidades y documentación del proyecto: [vidasalud-docs](https://github.com/effimrv/vidasalud-docs).
+
 ## Responsabilidades
 
-- Consultar las atenciones registradas.
-- Consultar una atención por su identificador.
-- Crear nuevas atenciones.
-- Cambiar el estado de una atención mediante transiciones controladas.
+- Consultar las atenciones (todas, o solo las de un paciente) y el detalle de cada una con su historial.
+- Crear atenciones validando que la hora siga disponible en la agenda.
+- Avanzar automáticamente cada cita por sus estados y permitir cancelarla, con transiciones controladas.
+- Calcular la disponibilidad de horas por prestación y día.
+- Simular la demanda de otros pacientes.
 - Persistir la información en PostgreSQL/Supabase.
 - Publicar en RabbitMQ un evento por cada cita creada o cambio de estado.
 
@@ -64,13 +67,13 @@ Variables: `RABBITMQ_ADDRESSES` (por defecto `localhost:5672,localhost:5673`), `
 Requisitos: Java 17, Maven y una base de datos PostgreSQL accesible.
 
 ```bash
-mvn spring-boot:run
+DB_PASSWORD='…' mvn spring-boot:run
 ```
 
-Para generar el ejecutable:
+Para generar el ejecutable (también ejecuta las pruebas: servicios, flujo automático, agenda, configuración y repositorios sobre H2 en memoria):
 
 ```bash
-mvn clean package -DskipTests
+mvn clean package
 java -jar target/appointments-1.0.0.jar
 ```
 
