@@ -10,6 +10,7 @@ public record CitaEvento(
         TipoEventoCita tipo,
         Long citaId,
         String pacienteNombre,
+        String pacienteCorreo,
         Long servicioId,
         Long boxId,
         String estado,
@@ -18,6 +19,7 @@ public record CitaEvento(
 
     public static CitaEvento desde(Appointment cita) {
         return new CitaEvento(TipoEventoCita.desde(cita.getEstado()), cita.getId(), cita.getPacienteNombre(),
-                cita.getServicioId(), cita.getBoxId(), cita.getEstado().name(), cita.getFechaHora(), Instant.now());
+                cita.getPacienteCorreo(), cita.getServicioId(), cita.getBoxId(), cita.getEstado().name(),
+                cita.getFechaHora(), Instant.now());
     }
 }
