@@ -55,7 +55,7 @@ class AtencionServiceTest {
         ArgumentCaptor<CambioEstado> registro = ArgumentCaptor.forClass(CambioEstado.class);
         verify(historial).save(registro.capture());
         assertThat(registro.getValue().getResponsable()).isEqualTo("Paciente");
-        verify(eventos).publicarCambio(creada);
+        verify(eventos).publicarCambio(org.mockito.ArgumentMatchers.eq(creada), org.mockito.ArgumentMatchers.anyString());
     }
 
     @Test

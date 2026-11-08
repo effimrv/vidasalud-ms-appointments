@@ -83,7 +83,7 @@ public class AtencionService {
         Appointment guardada = repo.save(datos);
         historial.save(new CambioEstado(guardada.getId(), EstadoAtencion.SOLICITADA, ahora, responsable,
                 "Solicitud de hora registrada en línea."));
-        eventos.publicarCambio(guardada);
+        eventos.publicarCambio(guardada, responsable);
         return guardada;
     }
 
@@ -129,7 +129,7 @@ public class AtencionService {
         atencion.setObservacion(detalle);
         Appointment guardada = repo.save(atencion);
         historial.save(new CambioEstado(guardada.getId(), nuevo, ahora, responsable, detalle));
-        eventos.publicarCambio(guardada);
+        eventos.publicarCambio(guardada, responsable);
         return guardada;
     }
 }

@@ -37,14 +37,14 @@ class RabbitCitaEventPublisherTest {
 
     @Test
     void unaCitaNuevaSePublicaComoCitaCreada() {
-        publisher.publicarCambio(cita(EstadoAtencion.SOLICITADA));
+        publisher.publicarCambio(cita(EstadoAtencion.SOLICITADA), "Paciente");
 
         verify(rabbitTemplate).convertAndSend(eq("vidasalud.citas.topic"), eq("cita.creada"), any(CitaEvento.class), any(CorrelationData.class));
     }
 
     @Test
     void cadaEstadoTieneSuRoutingKey() {
-        publisher.publicarCambio(cita(EstadoAtencion.EN_ATENCION));
+        publisher.publicarCambio(cita(EstadoAtencion.EN_ATENCION), "Paciente");
 
         verify(rabbitTemplate).convertAndSend(eq("vidasalud.citas.topic"), eq("cita.en_atencion"), any(CitaEvento.class), any(CorrelationData.class));
     }
@@ -54,7 +54,7 @@ class RabbitCitaEventPublisherTest {
         doThrow(new AmqpConnectException(new RuntimeException("sin conexión")))
                 .when(rabbitTemplate).convertAndSend(any(String.class), any(String.class), any(Object.class), any(CorrelationData.class));
 
-        assertThatCode(() -> publisher.publicarCambio(cita(EstadoAtencion.CONFIRMADA))).doesNotThrowAnyException();
+        assertThatCode(() -> publisher.publicarCambio(cita(EstadoAtencion.CONFIRMADA), "Paciente")).doesNotThrowAnyException();
     }
 
     private Appointment cita(EstadoAtencion estado) {

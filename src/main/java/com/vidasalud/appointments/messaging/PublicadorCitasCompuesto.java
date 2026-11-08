@@ -26,9 +26,9 @@ public class PublicadorCitasCompuesto implements CitaEventPublisher {
     }
 
     @Override
-    public void publicarCambio(Appointment cita) {
-        publicarEn("RabbitMQ", () -> rabbit.publicarCambio(cita));
-        publicarEn("Kafka", () -> kafka.publicarCambio(cita));
+    public void publicarCambio(Appointment cita, String responsable) {
+        publicarEn("RabbitMQ", () -> rabbit.publicarCambio(cita, responsable));
+        publicarEn("Kafka", () -> kafka.publicarCambio(cita, responsable));
     }
 
     private void publicarEn(String destino, Runnable publicacion) {

@@ -18,21 +18,21 @@ class PublicadorCitasCompuestoTest {
         KafkaCitaEventPublisher kafka = mock(KafkaCitaEventPublisher.class);
         Appointment cita = cita();
 
-        new PublicadorCitasCompuesto(rabbit, kafka).publicarCambio(cita);
+        new PublicadorCitasCompuesto(rabbit, kafka).publicarCambio(cita, "Paciente");
 
-        verify(rabbit).publicarCambio(cita);
-        verify(kafka).publicarCambio(cita);
+        verify(rabbit).publicarCambio(cita, "Paciente");
+        verify(kafka).publicarCambio(cita, "Paciente");
     }
 
     @Test
     void unFalloEnRabbitNoImpideEnviarASKafka() {
         RabbitCitaEventPublisher rabbit = mock(RabbitCitaEventPublisher.class);
         KafkaCitaEventPublisher kafka = mock(KafkaCitaEventPublisher.class);
-        doThrow(new IllegalStateException("rabbit caído")).when(rabbit).publicarCambio(any());
+        doThrow(new IllegalStateException("rabbit caído")).when(rabbit).publicarCambio(any(), any());
         Appointment cita = cita();
 
-        assertThatCode(() -> new PublicadorCitasCompuesto(rabbit, kafka).publicarCambio(cita)).doesNotThrowAnyException();
-        verify(kafka).publicarCambio(cita);
+        assertThatCode(() -> new PublicadorCitasCompuesto(rabbit, kafka).publicarCambio(cita, "Paciente")).doesNotThrowAnyException();
+        verify(kafka).publicarCambio(cita, "Paciente");
     }
 
     private Appointment cita() {
