@@ -1,6 +1,7 @@
 package com.vidasalud.appointments.messaging;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.lang.NonNull;
 
 import java.util.Map;
 
@@ -14,7 +15,8 @@ public record KafkaTopicosProperties(Topicos topicos) {
 
     public record Topicos(Topico citas) {}
 
-    public record Topico(String nombre, int particiones, short replicas, Map<String, String> configuracion) {}
+    public record Topico(@NonNull String nombre, int particiones, short replicas,
+                         @NonNull Map<String, String> configuracion) {}
 
     public KafkaTopicosProperties {
         if (topicos == null || topicos.citas() == null || topicos.citas().nombre() == null

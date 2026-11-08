@@ -40,7 +40,7 @@ public class KafkaConfig {
      */
     @Bean
     public KafkaTemplate<String, CitaEvento> kafkaTemplate(KafkaProperties propiedades, ObjectMapper objectMapper) {
-        Map<String, Object> config = propiedades.buildProducerProperties();
+        Map<String, Object> config = propiedades.buildProducerProperties(null);
         config.remove(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG);
         config.remove(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG);
         // Los ajustes JSON los fija el código (setter); no pueden venir también de las propiedades.

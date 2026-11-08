@@ -10,8 +10,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-/** Los comodines de Mockito (any) no declaran nulabilidad: se silencia ese aviso del IDE. */
-@SuppressWarnings("null")
 class PublicadorCitasCompuestoTest {
 
     @Test
