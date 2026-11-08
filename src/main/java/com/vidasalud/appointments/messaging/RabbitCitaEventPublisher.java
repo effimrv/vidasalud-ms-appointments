@@ -26,8 +26,8 @@ public class RabbitCitaEventPublisher implements CitaEventPublisher {
     }
 
     @Override
-    public void publicarCambio(Appointment cita) {
-        CitaEvento evento = CitaEvento.desde(cita);
+    public void publicarCambio(Appointment cita, String responsable) {
+        CitaEvento evento = CitaEvento.desde(cita, responsable);
         String routingKey = props.routingKey(evento.tipo());
         try {
             rabbitTemplate.convertAndSend(props.exchangeCitas(), routingKey, evento,

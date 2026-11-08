@@ -20,7 +20,7 @@ class FormatoEventoKafkaTest {
         ObjectMapper mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).build();
         CitaEvento evento = new CitaEvento(TipoEventoCita.CONFIRMADA, 9L, "Ana", "ana@example.com", 1L, 2L,
-                "CONFIRMADA", LocalDateTime.of(2026, 11, 10, 10, 30), Instant.parse("2026-11-08T12:00:00Z"));
+                "CONFIRMADA", LocalDateTime.of(2026, 11, 10, 10, 30), Instant.parse("2026-11-08T12:00:00Z"), "Sistema");
 
         String cuerpo;
         try (JsonSerializer<CitaEvento> json = new JsonSerializer<>(mapper)) {

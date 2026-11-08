@@ -40,14 +40,14 @@ class KafkaCitaEventPublisherTest {
 
     @Test
     void publicaEnElTopicoConLaCitaComoClave() {
-        publisher.publicarCambio(cita(EstadoAtencion.SOLICITADA));
+        publisher.publicarCambio(cita(EstadoAtencion.SOLICITADA), "Paciente");
 
         verify(kafkaTemplate).send(eq("appointments.events"), eq("10"), any(CitaEvento.class));
     }
 
     @Test
     void elEventoLlevaElEstadoActualDeLaCita() {
-        publisher.publicarCambio(cita(EstadoAtencion.CERRADA));
+        publisher.publicarCambio(cita(EstadoAtencion.CERRADA), "Paciente");
 
         verify(kafkaTemplate).send(eq("appointments.events"), eq("10"),
                 org.mockito.ArgumentMatchers.argThat(evento -> evento.tipo() == TipoEventoCita.CERRADA
@@ -59,7 +59,7 @@ class KafkaCitaEventPublisherTest {
         doThrow(new KafkaException("sin brokers"))
                 .when(kafkaTemplate).send(anyString(), anyString(), any(CitaEvento.class));
 
-        assertThatCode(() -> publisher.publicarCambio(cita(EstadoAtencion.CONFIRMADA))).doesNotThrowAnyException();
+        assertThatCode(() -> publisher.publicarCambio(cita(EstadoAtencion.CONFIRMADA), "Paciente")).doesNotThrowAnyException();
     }
 
     @Test
@@ -67,7 +67,7 @@ class KafkaCitaEventPublisherTest {
         when(kafkaTemplate.send(anyString(), anyString(), any(CitaEvento.class)))
                 .thenReturn(CompletableFuture.failedFuture(new KafkaException("NOT_ENOUGH_REPLICAS")));
 
-        assertThatCode(() -> publisher.publicarCambio(cita(EstadoAtencion.EN_ATENCION))).doesNotThrowAnyException();
+        assertThatCode(() -> publisher.publicarCambio(cita(EstadoAtencion.EN_ATENCION), "Paciente")).doesNotThrowAnyException();
     }
 
     private Appointment cita(EstadoAtencion estado) {

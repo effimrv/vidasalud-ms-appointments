@@ -29,8 +29,8 @@ public class KafkaCitaEventPublisher implements CitaEventPublisher {
     }
 
     @Override
-    public void publicarCambio(Appointment cita) {
-        CitaEvento evento = CitaEvento.desde(cita);
+    public void publicarCambio(Appointment cita, String responsable) {
+        CitaEvento evento = CitaEvento.desde(cita, responsable);
         String topico = props.citas().nombre();
         String clave = claveDe(cita);
         try {

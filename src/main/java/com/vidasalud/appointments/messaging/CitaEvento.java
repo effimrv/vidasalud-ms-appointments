@@ -15,11 +15,13 @@ public record CitaEvento(
         Long boxId,
         String estado,
         LocalDateTime fechaHora,
-        Instant ocurridoEn) {
+        Instant ocurridoEn,
+        String responsable) {
 
-    public static CitaEvento desde(Appointment cita) {
+    /** Quien provoca el cambio: Paciente, Sistema, Recepción o Administración. */
+    public static CitaEvento desde(Appointment cita, String responsable) {
         return new CitaEvento(TipoEventoCita.desde(cita.getEstado()), cita.getId(), cita.getPacienteNombre(),
                 cita.getPacienteCorreo(), cita.getServicioId(), cita.getBoxId(), cita.getEstado().name(),
-                cita.getFechaHora(), Instant.now());
+                cita.getFechaHora(), Instant.now(), responsable);
     }
 }

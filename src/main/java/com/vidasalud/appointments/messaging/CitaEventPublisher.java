@@ -6,5 +6,5 @@ import com.vidasalud.appointments.model.Appointment;
 public interface CitaEventPublisher {
 
     /** Publica el evento correspondiente al estado actual de la cita (creada, confirmada, cerrada, ...). */
-    void publicarCambio(Appointment cita);
+    void publicarCambio(Appointment cita, String responsable);
 }
