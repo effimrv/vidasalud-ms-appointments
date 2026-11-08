@@ -4,6 +4,7 @@ import com.vidasalud.appointments.model.Appointment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
@@ -31,13 +32,18 @@ public class KafkaCitaEventPublisher implements CitaEventPublisher {
     public void publicarCambio(Appointment cita) {
         CitaEvento evento = CitaEvento.desde(cita);
         String topico = props.citas().nombre();
-        String clave = String.valueOf(cita.getId());
+        String clave = claveDe(cita);
         try {
             kafkaTemplate.send(topico, clave, evento).whenComplete((resultado, error) -> registrar(topico, clave, evento, resultado, error));
         } catch (RuntimeException e) {
             log.error("No se pudo enviar el evento {} de la cita {} a Kafka ({}); la cita se guardó igual. Causa: {}",
                     evento.tipo(), cita.getId(), topico, e.getMessage());
         }
+    }
+
+    /** Clave del mensaje: el id de la cita como texto. */
+    static @NonNull String claveDe(Appointment cita) {
+        return "" + cita.getId();
     }
 
     private void registrar(String topico, String clave, CitaEvento evento,
