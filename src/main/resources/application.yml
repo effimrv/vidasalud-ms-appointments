@@ -12,6 +12,23 @@ spring:
     connection-timeout: 3s
     publisher-confirm-type: correlated
     publisher-returns: true
+  kafka:
+    # Brokers del clúster (docker-compose de vidasalud-infra). Dentro de Docker: kafka1:29092,kafka2:29092,kafka3:29092.
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # acks=all + idempotencia: el broker confirma solo cuando las réplicas sincronizadas tienen el evento, sin duplicados.
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+        # Si el clúster no responde, el envío falla en 3 s en vez de bloquear la petición HTTP (por defecto 60 s).
+        max.block.ms: 3000
+        request.timeout.ms: 3000
+        delivery.timeout.ms: 10000
+        # Sin cabeceras de tipo Java: el consumidor define su propio DTO.
+        spring.json.add.type.headers: false
   datasource:
     # La contraseña nunca va en el repositorio: se entrega con la variable de entorno DB_PASSWORD.
     url: ${DB_URL:jdbc:postgresql://aws-0-sa-east-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0}
@@ -28,6 +45,17 @@ spring:
 
 # Nombres de mensajería centralizados (misma estructura que ms-notify): el publicador no escribe nombres a mano.
 vidasalud:
+  kafka:
+    topicos:
+      citas:
+        nombre: appointments.events
+        particiones: 3
+        replicas: 3
+        # Retención de 7 días, borrado por antigüedad y al menos 2 réplicas sincronizadas por escritura.
+        configuracion:
+          retention.ms: "604800000"
+          cleanup.policy: delete
+          min.insync.replicas: "2"
   mensajeria:
     exchanges:
       # Exchange topic al que se publican los eventos de citas (lo consumen las colas de ms-notify).
