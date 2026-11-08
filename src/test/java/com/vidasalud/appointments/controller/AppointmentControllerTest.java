@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /** Mockito, AssertJ, MockMvc y los repositorios de Spring Data no declaran nulabilidad: se silencia ese aviso del IDE. */
 @SuppressWarnings("null")
+@WithMockUser
+@org.springframework.context.annotation.Import({com.vidasalud.appointments.config.SecurityConfig.class, com.vidasalud.appointments.config.ValidacionJwtConfig.class})
 @WebMvcTest(AppointmentController.class)
 class AppointmentControllerTest {
 
@@ -97,5 +101,11 @@ class AppointmentControllerTest {
         a.setServicioId(1L);
         a.setEstado(EstadoAtencion.SOLICITADA);
         return a;
+    }
+
+    @WithAnonymousUser
+    @org.junit.jupiter.api.Test
+    void sinTokenNoSePuedeConsultar() throws Exception {
+        mvc.perform(get("/api/appointments")).andExpect(status().isUnauthorized());
     }
 }
