@@ -13,6 +13,7 @@ Matriz de funcionalidades y documentación del proyecto: [vidasalud-docs](https:
 - Simular la demanda de otros pacientes.
 - Persistir la información en PostgreSQL/Supabase.
 - Publicar en RabbitMQ un evento por cada cita creada o cambio de estado.
+- Publicar en Kafka el mismo evento en el tópico `appointments.events` (clave = id de la cita), con el responsable del cambio (Paciente, Sistema, Recepción o Administración).
 
 ## Tecnologías
 
@@ -22,6 +23,7 @@ Matriz de funcionalidades y documentación del proyecto: [vidasalud-docs](https:
 - Spring Data JPA e Hibernate.
 - PostgreSQL JDBC Driver.
 - Spring AMQP (RabbitMQ).
+- Spring for Apache Kafka.
 - Maven.
 
 ## Puerto y endpoints
