@@ -23,7 +23,7 @@ public record FlujoProperties(boolean automatico, Map<EstadoAtencion, Duration> 
         }
 
         public List<LocalTime> horas() {
-            return bloques.stream().map(LocalTime::parse).toList();
+            return bloques.stream().map(hora -> LocalTime.parse(hora)).toList();
         }
     }
 
