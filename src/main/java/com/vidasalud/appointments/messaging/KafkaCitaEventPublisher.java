@@ -43,7 +43,7 @@ public class KafkaCitaEventPublisher implements CitaEventPublisher {
 
     /** Clave del mensaje: el id de la cita como texto. */
     static @NonNull String claveDe(Appointment cita) {
-        return String.valueOf(cita.getId());
+        return "" + cita.getId();
     }
 
     private void registrar(String topico, String clave, CitaEvento evento,
